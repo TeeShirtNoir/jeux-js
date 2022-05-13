@@ -1,0 +1,98 @@
+﻿@font-face {
+    font-family: 'pixelfont';
+    src: url('Pixel Sans Serif.ttf');
+}
+
+.rotate {
+    -webkit-animation:spin 4s linear infinite;
+    -moz-animation:spin 4s linear infinite;
+    animation: spin 4s linear infinite;
+    }
+    @-moz-keyframes spin { 100% { -moz-transform: rotate(360deg); } }
+    @-webkit-keyframes spin { 100% { -webkit-transform: rotate(360deg); } }
+    @keyframes spin { 100% { -webkit-transform: rotate(360deg); transform: rotate(360deg); } } 
+
+#tank {
+    position:absolute;
+    top:600px
+}
+
+.button {
+    position: absolute;
+    background: transparent;
+    border: none !important;
+}
+
+#bodyjeu1 {
+    background: no-repeat url(mur.jfif);
+    background-size: cover 
+}
+
+#bodymenu {
+    background: no-repeat url(fondmenu.gif);
+    background-size: cover;
+}
+
+
+html{
+    overflow:hidden
+}
+.image {
+    position: absolute;
+}
+
+#coeur1 {
+    left: 0vw;
+}
+
+#coeur2 {
+    left:3.5vw;
+}
+
+#coeur3 {
+    left:7vw;
+}
+
+.title{
+font-family:'pixelfont';
+}
+
+#startbtn{
+    height: 100px;
+    font-family:pixelfont;
+    color:white;
+
+}
+
+#titlestart {
+    font-family:pixelfont;
+    font-size:50px;
+    color:white;
+    text-align:center;
+    line-height:500px;
+}
+
+#scoretext {
+    text-align:right;
+    font-family:pixelfont;
+    color:white;
+    font-size:20px;
+}
+
+.coeurs{
+    float:left;
+}
+
+.clignote {
+    position: fixed;
+    top: 0;
+    left: 0;
+    opacity: 0.3;
+    animation: clignote 2s linear infinite;
+}
+
+@keyframes clignote {
+    50% {
+        opacity: 0;
+    }
+}

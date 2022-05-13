@@ -1,0 +1,224 @@
+﻿<!DOCTYPE html>
+
+<html lang="fr" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <Link rel="StyleSheet" href="StyleSheet1.css" type="text/css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <title>Le jeu de Trumpounet</title>
+</head>
+<body id="bodyjeu1">
+    <img src="rouge.png" style="display:none" id="imgrouge"/>
+    <div id="coeurs">
+        <img class="coeur image" id="coeur1" src="coeurplein.png" width="50px" height="50px" style="display:none" />
+        <img class="coeur image" id="coeur2" src="coeurplein.png" width="50px" height="50px" style="display:none" />
+        <img class="coeur image" id="coeur3" src="coeurplein.png" width="50px" height="50px" style="display:none" />
+        <p id="scoretext" class="title" style="display:none">Score: 0</p>
+    </div>
+
+    <div id="titlestart">
+        <p id="c1" style="display:none">3</p>
+        <p id="c2" style="display:none">2</p>
+        <p id="c3" style="display:none">1</p>
+        <p id="cs" style="display:none">START</p>
+    </div>
+
+    <button onclick="start()" id="startbtn" class="button"> start</button>
+    <img class="" id="tank" src="tank.gif" width="100px" height="100px" />
+
+
+    <script>
+        var nbPointVie = 3;
+        var score = 0;
+
+        $(document).keydown(function () {
+            var offsetGauche = $("#tank").offset().left;
+            var offsetTop = $("#tank").offset().top;
+
+            if (event.key == 'ArrowRight' && offsetGauche + 50 < ($(window).width() / 3 - $("#tank").width())) {
+                $("#tank").offset({ left: offsetGauche + 50 })
+            }
+            if (event.key == 'ArrowLeft' && offsetGauche - 50 > 0) {
+                $("#tank").offset({ left: offsetGauche - 50 })
+            }
+            if (event.key == 'ArrowUp' && offsetTop - 50 > 0) {
+                $("#tank").offset({ top: offsetTop - 50 })
+            }
+            if (event.key == 'ArrowDown' && offsetTop + 50 < ($(window).height() - $("#tank").height())) {
+                $("#tank").offset({ top: offsetTop + 50 })
+            }
+
+        });
+
+        function start() {
+            $("#c1").show();
+            $("#scoretext").show();
+            $("#startbtn").hide();
+            setTimeout(function () { $("#c1").hide(); }, 1000);
+            setTimeout(function () { $("#c2").show(); }, 1001);
+            setTimeout(function () { $("#c2").hide(); }, 2001);
+            setTimeout(function () { $("#c3").show(); }, 2002);
+            setTimeout(function () { $("#c3").hide(); }, 3002);
+            setTimeout(function () { $("#cs").show(); }, 3003);
+            setTimeout(function () {
+                $("#cs").hide();
+                $("#coeur1").show();
+                $("#coeur2").show();
+                $("#coeur3").show();
+            }, 4003);
+            setTimeout(function () {
+                setInterval(function () {
+                    spawnWave();
+                }, 2000)
+            }, 4500);
+        }
+
+        var i = 0;
+        function spawnWave() {
+            var img = document.createElement('img');
+            var body = document.getElementById('bodyjeu1');
+            var posTopRock = Math.floor(Math.random() * ($(window).height() - 50));
+            var posTopMigrant = Math.floor(Math.random() * ($(window).height() - 100));
+            var posSpawnW = Math.floor($(window).width() - $(window).width() / 5);
+
+            img.src = 'rocher' + Math.floor(Math.random() * 10) + '.png';
+            img.id = "rocher" + i;
+            img.classList.add('image');
+            img.classList.add('rocher');
+            body.appendChild(img);
+            $("#rocher" + i).offset({ top: posTopRock, left: posSpawnW });
+            startMvt("#rocher" + i);
+
+            var img2 = document.createElement('img');
+            img2.src = 'migrant.png';
+            img2.classList.add('image');
+            img2.classList.add('migrant');
+            img2.height = 110;
+            img2.width = 110;
+            img2.id = 'migrant' + i;
+            body.appendChild(img2);
+            $("#migrant" + i).offset({ top: posTopMigrant, left: posSpawnW })
+            startMvt("#migrant" + i);
+
+            i += 1;
+        }
+
+        function startMvt(id) {
+            var interval = setInterval(function () {
+                if ($(id).offset().left > -100) {
+                    var offsetGauche = $(id).offset().left;
+                    $(id).offset({ left: offsetGauche - 1 })
+                    checkCollision(interval);
+                }
+                else {
+                    clearInterval(interval);
+                    $(id).remove();
+                }
+            }, 5)
+        }
+
+        function retirerUnCoeur() {
+            var n = 'coeurvide.png'
+            var c1 = document.getElementById('coeur1');
+            var c2 = document.getElementById('coeur2');
+            var c3 = document.getElementById('coeur3');
+            if (nbPointVie == 3) {
+                c1.setAttribute('src', n);
+                $("#coeur1").height = 50;
+                $("#coeur1").width = 50;
+                nbPointVie -= 1;
+            }
+            else if (nbPointVie == 2) {
+                c2.setAttribute('src', n);
+                $("#coeur2").height = 50;
+                $("#coeur2").width = 50;
+                nbPointVie -= 1;
+            }
+            else if (nbPointVie <= 1) {
+                c3.setAttribute('src', n);
+                $("#coeur3").height = 50;
+                $("#coeur3").width = 50;
+                nbPointVie -= 1;
+                alert("loosed !");
+            }
+
+
+        }
+
+        function checkCollision(interval) {
+            var posTTank = $('#tank').offset().top;
+            var posLTank = $('#tank').offset().left;
+            var hTank = $('#tank').height();
+            var wTank = $('#tank').width();
+
+            var migrants = document.querySelectorAll(".migrant");
+            var rochers = document.querySelectorAll(".rocher");
+            for (var i = 0; i < rochers.length; i++) {
+                var posTRock = parseInt(rochers[i].style.top, 10);
+                var posLRock = parseInt(rochers[i].style.left, 10);
+                var hRock = rochers[i].height
+                var wRock = rochers[i].width;
+
+                var chk1 = posTTank + hTank > posTRock && posTTank < posTRock && posLTank + wTank > posLRock && posLTank < posLRock;
+                var chk2 = posTTank + hTank > posTRock && posLTank > posLRock && posLTank + wTank < posLRock + wRock && posTTank < posTRock;
+                var chk3 = posLTank > posLRock && posLTank < posLRock + wRock && posLTank + wTank > posLRock + wRock && posTTank + hTank > posTRock && posTTank + hTank < posTRock + hRock;
+                var chk4 = posTTank > posTRock && posTTank + hTank < posTRock + hRock && posLTank > posLRock && posLTank < posLRock + wRock;
+                var chk5 = posTTank > posTRock && posTTank + hTank > posTRock + hRock && posLTank > posLRock && posLTank < posLRock + wRock && posTTank < posTRock + hRock;
+                var chk6 = posTTank > posTRock && posTTank + hTank > posTRock + hRock && posLTank > posLRock && posLTank + wTank < posLRock + wRock && posTTank < posTRock + hRock;
+                var chk7 = posTTank > posTRock && posTTank + hTank > posTRock + hRock && posLTank + wTank < posLRock + wRock && posLTank + wTank > posLRock && posTTank < posTRock + hRock;
+                var chk8 = posTTank > posTRock && posTTank + hTank < posTRock + hRock && posTTank + hTank > posTRock && posLTank + wTank > posLRock && posLTank < posLRock
+
+                var contact = chk1 || chk2 || chk3 || chk4 || chk5 || chk6 || chk7 || chk8;
+                if (contact) {
+                    retirerUnCoeur();
+                    clignoterEcran();
+                    rochers[i].remove();
+                }
+            }
+
+            for (var i = 0; i < migrants.length; i++) {
+                var posTMigrant = parseInt(migrants[i].style.top, 10);
+                var posLMigrant = parseInt(migrants[i].style.left, 10);
+                var hMigrant = migrants[i].height;
+                var wMigrant = migrants[i].width;
+
+                var chk1 = posTTank + hTank > posTMigrant && posTTank < posTMigrant && posLTank + wTank > posLMigrant && posLTank < posLMigrant;
+                var chk2 = posTTank + hTank > posTMigrant && posLTank > posLMigrant && posLTank + wTank < posLMigrant + wMigrant && posTTank < posTMigrant;
+                var chk3 = posLTank > posLMigrant && posLTank < posLMigrant + wMigrant && posLTank + wTank > posLMigrant + wMigrant && posTTank + hTank > posTMigrant && posTTank + hTank < posTMigrant + hMigrant;
+                var chk4 = posTTank > posTMigrant && posTTank + hTank < posTMigrant + hMigrant && posLTank > posLMigrant && posLTank < posLMigrant + wMigrant;
+                var chk5 = posTTank > posTMigrant && posTTank + hTank > posTMigrant + hMigrant && posLTank > posLMigrant && posLTank < posLMigrant + wMigrant && posTTank < posTMigrant + hMigrant;
+                var chk6 = posTTank > posTMigrant && posTTank + hTank > posTMigrant + hMigrant && posLTank > posLMigrant && posLTank + wTank < posLMigrant + wMigrant && posTTank < posTMigrant + hMigrant;
+                var chk7 = posTTank > posTMigrant && posTTank + hTank > posTMigrant + hMigrant && posLTank + wTank < posLMigrant + wMigrant && posLTank + wTank > posLMigrant && posTTank < posTMigrant + hMigrant;
+                var chk8 = posTTank > posTMigrant && posTTank + hTank < posTMigrant + hMigrant && posTTank + hTank > posTMigrant && posLTank + wTank > posLMigrant && posLTank < posLMigrant
+
+                var contact = chk1 || chk2 || chk3 || chk4 || chk5 || chk6 || chk7 || chk8;
+                if (contact) {
+                    score += 1;
+                    document.getElementById("scoretext").textContent = "Score: " + score;
+                    migrants[i].remove();
+                }
+            }
+        }
+
+        function clignoterEcran() {
+            document.getElementById("imgrouge").classList.add("clignote");
+            $("#imgrouge").show();
+            setTimeout(function () {
+                document.getElementById("imgrouge").classList.remove("clignote");
+                $("#imgrouge").hide();
+            }, 1000);
+
+        }
+
+        function RandomZigZag(imgZ) {
+            let posTopElem = parseInt(imgZ.style.top, 10);
+            let posTopElemRef = parseInt(imgZ.style.top, 10);
+            setInterval(function () {
+
+                document.getElementById('imgZ').offset({ top: posTopElem + 5 })
+            }, 1000)
+        };
+            
+    </script>
+</body>
+</html>

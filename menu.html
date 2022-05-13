@@ -1,0 +1,39 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <Link rel="StyleSheet" href="Jeu1/StyleSheet1.css" type="text/css" />
+    <title>Menu de jeu</title>
+</head>
+
+<body id="bodymenu">
+    <script>
+
+        function jeu1() {
+            window.location.href = 'Jeu1/jeu1.html'
+        }
+
+        function jeu2() {
+            window.location.href = 'Jeu2/index.html'
+        }
+
+        function tutorial() {
+            alert("tutorial !");
+        }
+
+    </script>
+
+    <ul>
+        <li>
+            <button onclick="jeu1()" id="" class="title button"> Le jeu de Trumpounet</button>
+        </li>
+        <li>
+            <button onclick="jeu2()" id="" class="title button"> Le coureur sur piques</button>
+        </li>
+        <li>
+            <button onclick="tutorial()" id="" class="title button"> Tutoriel</button>
+        </li>
+    </ul>
+</body>
+</html>
